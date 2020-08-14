@@ -8,7 +8,7 @@ import re
 args = argv[1].split("::")
 FILE = args[0]
 LANG = args[1]
-PROCESSES_REMAIN = 0
+PROCESSES_REMAIN = 1
 MEM_EACH = 19832
 FREE = int(
     re.findall(
@@ -27,12 +27,8 @@ def text_to_speech(array_sentences, process_name="main"):
         tts.save(f"tts_temp_{index:010}.mp3")
 
     PROCESSES_REMAIN -= 1
-    print("(+) {}: completed, remain: {}"\
-          .format(process_name,
-                  PROCESSES_REMAIN
-          )
-    )
-    
+    print(f"(+) {process_name}: completed, remain: {PROCESSES_REMAIN}")
+
     if not PROCESSES_REMAIN:
         rename()
 
@@ -45,11 +41,11 @@ def rename():
 
 
 if __name__ == "__main__":
-    array_sentences = [sentence for sentence in 
+    array_sentences = [sentence for sentence in
                        re.findall("([àáãạảăắằẳẵặâấầẩẫậèéẹẻẽêềếểễệđìíĩỉịò"
                                   "óõọỏôốồổỗộơớờởỡợùúũụủưứừửữựỳỵỷỹýÀÁÃ"
                                   "ẠẢĂẮẰẲẴẶÂẤẦẨẪẬÈÉẸẺẼÊỀẾỂỄỆĐÌÍĨỈỊÒÓÕỌ"
-                                  "ỎÔỐỒỔỖỘƠỚỜỞỠỢÙÚŨỤỦƯỨỪỬỮỰỲỴỶỸÝA-Za-z ]+)", 
+                                  "ỎÔỐỒỔỖỘƠỚỜỞỠỢÙÚŨỤỦƯỨỪỬỮỰỲỴỶỸÝA-Za-z0-9 ]+)",
                        open(FILE).read()) if sentence.strip()
     ]
 
@@ -66,7 +62,7 @@ if __name__ == "__main__":
 
     format_zeros = len(str(len_array_sentences))
     if len_array_sentences > thr:
-        PROCESSES_REMAIN = thr+1
+        PROCESSES_REMAIN += thr
         for _ in range(0, thr):
             Thread(target=text_to_speech,
                    args=(array_sentences[index:index+branch],
@@ -76,8 +72,6 @@ if __name__ == "__main__":
                    )
             ).start()
             index += branch
-    else:
-        PROCESSES_REMAIN = 1
 
     Thread(target=text_to_speech,
            args=(array_sentences[index:],
