@@ -34,10 +34,7 @@ def text_to_speech(array_sentences, process_name="main"):
 
 
 def rename():
-    os.system(f"cat tts_temp_*.mp3 > \"{FILE}.meom\" &&"
-              f" rm tts_temp_*.mp3 &&"
-              f" mv \"{FILE}.meom\" \"{FILE}.mp3\""
-    )
+    os.system(f"bash rename.sh \"{FILE}\"")
 
 
 if __name__ == "__main__":
